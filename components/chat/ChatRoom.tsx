@@ -145,9 +145,28 @@ export function ChatRoom({ currentUser, currentProfile, room, initialMessages }:
       file_size: fileSize || null,
     };
 
-    const { error } = await supabase.from("messages").insert(messageData);
+    const { data, error } = await supabase
+      .from("messages")
+      .insert(messageData)
+      .select(`
+        *,
+        profiles:user_id (
+          id,
+          email,
+          display_name,
+          avatar_url
+        )
+      `)
+      .single();
+
     if (error) {
       console.error("Error sending message:", error);
+    } else if (data) {
+      // Cập nhật UI ngay lập tức cho người gửi
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === data.id)) return prev;
+        return [...prev, data as Message];
+      });
     }
   };
 

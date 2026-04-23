@@ -62,7 +62,7 @@ ON CONFLICT DO NOTHING;
 CREATE TABLE IF NOT EXISTS public.messages (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   room_id UUID REFERENCES public.rooms(id) ON DELETE CASCADE NOT NULL,
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
   content TEXT,
   type TEXT DEFAULT 'text' CHECK (type IN ('text', 'image', 'file')),
   file_url TEXT,
